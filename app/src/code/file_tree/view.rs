@@ -2388,6 +2388,19 @@ impl FileTreeView {
                             .with_on_select_action(FileTreeAction::OpenInNewTab { id: id.clone() })
                             .into_item(),
                     );
+                    if self.is_folder_expanded(&id.root, item.path()) {
+                        items.push(
+                            MenuItemFields::new("Collapse")
+                                .with_on_select_action(FileTreeAction::Collapse)
+                                .into_item(),
+                        );
+                    } else {
+                        items.push(
+                            MenuItemFields::new("Expand")
+                                .with_on_select_action(FileTreeAction::Expand)
+                                .into_item(),
+                        );
+                    }
                 }
             };
 
@@ -3052,6 +3065,7 @@ impl TypedActionView for FileTreeView {
                     self.toggle_folder_expansion(&selected_item.root, &sp, ctx);
                     ctx.notify();
                 }
+                self.context_menu_state.take();
             }
             FileTreeAction::Collapse => {
                 if let Some(selected_item) = self.selected_item.clone()
@@ -3061,6 +3075,7 @@ impl TypedActionView for FileTreeView {
                     self.toggle_folder_expansion(&selected_item.root, &sp, ctx);
                     ctx.notify();
                 }
+                self.context_menu_state.take();
             }
             FileTreeAction::ExecuteSelectedItem => {
                 if let Some(id) = self.selected_item.clone() {
